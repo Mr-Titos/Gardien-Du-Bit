@@ -1,96 +1,174 @@
-# Gardien du bit 
+# 🔐 Bit Guardian
 
-Projet de gestionnaire de mot de passe sécurisé, avec la technologie Balzor et Dotnet réalisé par Arthur TITOS et Kévin QUIERCELIN. 
+A secure password manager developed with **Blazor WebAssembly** and **ASP.NET Core**.
 
-### Features supplémentaire
+## 👥 Development Team
 
-- Implémentation du ToTP avec un QR CODE et code
+- **Arthur TITOS**
+- **Kévin QUIERCELIN**
 
-- Session sauvergarder même après fermeture du navigateur (stockage sécurisé des informations dans le localStorage)
+## 📋 Table of Contents
 
-- Partage de coffre via un lien sécurisé
+- [Overview](#-overview)
+- [Features](#-features)
+- [Architecture](#-architecture)
+- [Technologies Used](#-technologies-used)
+- [Installation](#-installation)
 
-- Sécurisation des routes API contre toute attaque par temps d'exécution 
+## 🎯 Overview
 
-- 
+Bit Guardian is a secure web application for managing and storing passwords in an encrypted way. The app uses a modern architecture with Blazor WebAssembly for the frontend and ASP.NET Core for the backend API.
 
-- Ajout de microtransaction via les gif sur l'écran de connexion (non)
-### Architecture
-🔧 1. api-gardienbit (Back-end ASP.NET Core Web API)
-Ce projet représente l’API principale, qui gère la logique métier, les accès aux données, et l’exposition des endpoints.
-📁 Structure :
-Controllers_ : Contient les contrôleurs de l’API (Controller C#), qui exposent les routes HTTP (ex: GET, POST) à consommer par le front-end.
+## ✨ Features
 
+### 🔐 Advanced Security
+- **TOTP Authentication** with QR Code for enhanced security
+- **Data encryption** with robust algorithms
+- **API route protection** against injection attacks
 
-DAL (Data Access Layer) : Couche d’accès aux données, souvent pour des opérations personnalisées sur la base.
+### 👤 User Experience
+- **Persistent session** - Keeps the session even after closing the browser
+- **Secure storage** of information in localStorage
+- **Modern and intuitive interface**
 
+### 🤝 Sharing and Collaboration
+- **Vault sharing** via secure links
+- **Access permission management**
 
-Fixtures : Pour initialiser des données (seeding), utile en développement ou pour des jeux de données de test.
+## 🏗️ Architecture
 
+The application follows a 3-layer architecture: Backend, Frontend, and a Shared Library.
 
-Migrations : Fichiers générés par Entity Framework Core pour gérer l'évolution du schéma de base de données.
+### 1. `api-gardienbit` (Backend)
+This project is the main API, handling business logic, data access, and exposing endpoints.
 
+**Project structure:**
+- **Controllers:** Contains API controllers (C#) exposing HTTP routes (e.g., GET, POST) for the frontend.
+- **DAL (Data Access Layer):** Data access layer, often for custom database operations.
+- **Fixtures:** For seeding data, useful in development or for test datasets.
+- **Migrations:** Entity Framework Core files for managing database schema changes.
+- **Models:** Represents database entities (e.g., User, Vault, etc.).
+- **Repositories:** Implements the Repository pattern to encapsulate data access logic.
+- **Services:** Contains business logic, used by controllers.
+- **Utils:** Reusable utility functions (e.g., encryption, validation, token generation).
+- **Program.cs:** Application entry point (ASP.NET Core configuration).
+- **appsettings.json:** API configuration (connections, keys, options, etc.).
 
-Models : Représente les entités de la base de données (ex: User, Vault, etc.).
+### 2. `common-gardienbit` (Shared Library)
+A common project used by both the API and WebAssembly. Used to share type definitions, such as DTOs, enums, and utility classes.
 
+**Project structure:**
+- **DTO (Data Transfer Objects):** Lightweight and secure representations of data exchanged between client and server.
+- **Enum:** Shared enumerations (e.g., roles, statuses, etc.).
+- **Utils:** Utility methods reused across all projects (e.g., cryptographic helpers, extensions, etc.).
 
-Repositories : Implémente le pattern Repository pour encapsuler la logique d'accès aux données.
+### 3. `IIABlazorWebAssembly` (Frontend)
+This is the SPA (Single Page Application) frontend, developed with Blazor WebAssembly.
 
+**Project structure:**
+- **Connected Services:** References to remote services (e.g., Swagger, Microsoft APIs, etc.).
+- **wwwroot:** Static files (CSS, images, JS).
+- **Layout:** Layout components (MainLayout, NavMenu, etc.).
+- **Models:** Data models specific to the frontend (sometimes linked to DTOs).
+- **Pages:** Blazor .razor components representing views/pages.
+- **Services:** Classes managing client-side logic (e.g., API calls via HttpClient, local storage management, etc.).
+- **Shared:** Reusable Blazor components (buttons, dialogs, progress bars, etc.).
+- **App.razor:** Defines the app structure and routes.
+- **Program.cs:** Configures Blazor WebAssembly (services, dependency injection, etc.).
 
-Services : Contient la logique métier, utilisée par les contrôleurs.
+### 🔧 Backend - `api-gardienbit`
+**ASP.NET Core Web API** - Handles business logic and data access
 
+```
+Project structure
+├── Controllers/     # API controllers (HTTP endpoints)
+├── DAL/            # Data access layer
+├── Fixtures/       # Test data and seeding
+├── Migrations/     # Entity Framework migrations
+├── Models/         # Database entities
+├── Repositories/   # Repository pattern
+├── Services/       # Business logic
+├── Utils/          # Utility functions
+├── Program.cs      # Application entry point
+└── appsettings.json # Configuration
+```
 
-Utils : Fonctions utilitaires réutilisables (ex: encryption, validation, génération de token…).
+### 📦 Shared Library - `common-gardienbit`
+**.NET Library** - Shares types and utilities between frontend and backend
 
+```
+Project structure
+├── DTO/            # Data Transfer Objects
+├── Enum/           # Shared enumerations
+└── Utils/          # Common utility methods
+```
 
-Program.cs : Point d’entrée de l’application (configuration ASP.NET Core).
+### 🌐 Frontend - `IIABlazorWebAssembly`
+**Blazor WebAssembly SPA** - Modern and responsive user interface
 
+```
+Project structure
+├── Connected Services/ # Remote services (Swagger, etc.)
+├── wwwroot/           # Static files (CSS, images, JS)
+├── Layout/            # Layout components
+├── Models/            # Frontend models
+├── Pages/             # Blazor pages (.razor)
+├── Services/          # Client-side services
+├── Shared/            # Reusable components
+├── App.razor          # App structure
+└── Program.cs         # Blazor configuration
+```
 
-appsettings.json : Configuration de l’API (connexions, clés, options...).
+## 🛠️ Technologies Used
 
+### Backend
+- **ASP.NET Core 8.0** - Web framework
+- **Entity Framework Core** - ORM for the database
+- **JWT Authentication** - Token-based authentication
+- **TOTP** - Two-factor authentication
 
+### Frontend
+- **Blazor WebAssembly** - SPA framework
+- **MudBlazor** - CSS framework for Blazor
 
-📦 2. common-gardienbit (Bibliothèque partagée)
-Projet commun utilisé par l’API et la WebAssembly. Sert à partager des définitions de types, comme les DTO, les énumérations et les classes utilitaires.
-📁 Structure :
-DTO (Data Transfer Objects) : Représentations allégées et sécurisées des données échangées entre client et serveur.
+### Database
+- **SQL Server** - Relational database
 
+## 🚀 Installation
 
-Enum : Énumérations partagées (ex: rôles, statuts…).
+### Prerequisites
+- **.NET 8.0 SDK** or newer
+- **SQL Server** (or SQL Server LocalDB)
+- **Visual Studio 2022** or **Visual Studio Code**
 
+### Installation Steps
 
-Utils : Méthodes utilitaires réutilisées dans tous les projets (ex: helpers cryptographiques, extensions…).
+1. **Clone the repository**
+   ```bash
+   git clone [repository-url]
+   cd gardien-du-bit
+   ```
 
+2. **Set up the database**
+   ```bash
+   cd api-gardienbit
+   dotnet ef database update
+   ```
 
+3. **Run the API**
+   ```bash
+   dotnet run
+   ```
 
-🌐 3. IIABlazorWebAssembly (Front-end Blazor WebAssembly)
-C’est le front-end SPA (Single Page Application) de ton application, développé avec Blazor WebAssembly.
-📁 Structure :
-Connected Services : Références aux services distants (ex: Swagger, API Microsoft…).
+4. **Run the frontend**
+   ```bash
+   cd ../IIABlazorWebAssembly
+   dotnet run
+   ```
 
+## 📄 License
 
-wwwroot : Fichiers statiques (CSS, images, JS).
-
-
-Layout : Composants de mise en page (MainLayout, NavMenu, etc.).
-
-
-Models : Modèles de données spécifiques au front-end (parfois liés aux DTO).
-
-
-Pages : Composants Blazor .razor représentant les vues/pages.
-
-
-Services : Contient les classes qui gèrent la logique côté client (ex: appels à l’API via HttpClient, gestion du stockage local...).
-
-
-Shared : Composants Blazor réutilisables (boutons, dialogues, barres de progression...).
-
-
-App.razor : Définit la structure de l'application et les routes.
-
-
-Program.cs : Configure Blazor WebAssembly (services, injection de dépendances, etc).
+This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 
 
