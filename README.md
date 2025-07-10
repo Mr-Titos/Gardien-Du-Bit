@@ -1,4 +1,4 @@
-# 🔐 Bit Guardian
+# 🔐 Gardien du Bit (Guardian Bit)
 
 A secure password manager developed with **Blazor WebAssembly** and **ASP.NET Core**.
 
