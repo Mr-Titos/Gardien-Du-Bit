@@ -1,0 +1,12 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="Token"
+                      Label="Token"
+                      Variant="Variant.Outlined"
+                      Adornment="Adornment.End" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="Submit">Confirmer</MudButton>
+    </DialogActions>
+</MudDialog>

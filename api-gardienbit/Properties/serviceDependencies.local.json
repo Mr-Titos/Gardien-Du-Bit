@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "identityapp1": {
+      "connectionInfo": "Inscription d’application : Le Gardien Du Bit API POC, locataire : institut d'informatique appliquée (iia-laval.fr - Microsoft Entra ID)",
+      "type": "identityapp.default"
+    }
+  }
+}

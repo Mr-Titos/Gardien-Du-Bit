@@ -1,0 +1,31 @@
+﻿@using common_gardienbit.DTO.Vault
+
+<MudDialog>
+    <DialogContent>
+        @if (revokeShareds != null && revokeShareds.Count() != 0)
+        {
+            <MudStack Spacing="2">
+                @foreach (var revoke in revokeShareds)
+                {
+                    <MudPaper Class="p-2 d-flex align-items-center justify-between" Elevation="1" >
+                        <MudText Class="mr-5" Typo="Typo.subtitle1">@revoke.userName</MudText>
+
+                        <MudButton Class="ml-2" Color="Color.Error" Variant="Variant.Outlined" OnClick="() => RevokeSharedUser(revoke)" >
+                            Révoquer
+                        </MudButton>
+                    </MudPaper>
+                }
+            </MudStack>
+        }
+        else
+        {
+            <MudText Typo="Typo.body1" Color="Color.Secondary">Il n'y a pas d'utilisateur partagé.</MudText>
+        }
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="() => MudDialog?.Close()" Color="Color.Primary" Variant="Variant.Filled">
+            Fermer
+        </MudButton>
+    </DialogActions>
+</MudDialog>

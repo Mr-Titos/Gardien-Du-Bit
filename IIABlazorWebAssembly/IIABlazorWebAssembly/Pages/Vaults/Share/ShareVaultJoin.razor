@@ -1,0 +1,22 @@
+﻿@page "/vaults/share/{token}"
+@inject NavigationManager Navigation
+
+<MudContainer MaxWidth="MaxWidth.False" Class="d-flex align-center justify-center" Style="height: 100vh;">
+    <div class="text-center">
+        @if (processing)
+        {
+            <MudProgressCircular Indeterminate Color="Color.Primary" />
+        }
+        else if (success)
+        {
+            <MudText Typo="Typo.h5" Color="Color.Success">Accès au coffre accordé !</MudText>
+            <MudButton Class="mt-4" Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => Navigation.NavigateTo("/vaults"))">
+                Aller à mes coffres
+            </MudButton>
+        }
+        else
+        {
+            <MudText Typo="Typo.h6" Color="Color.Error">Lien invalide ou expiré.</MudText>
+        }
+    </div>
+</MudContainer>

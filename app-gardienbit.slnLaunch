@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "Lancement Complet",
+    "Projects": [
+      {
+        "Name": "api-gardienbit\\api-gardienbit.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Name": "IIABlazorWebAssembly\\IIABlazorWebAssembly\\IIABlazorWebAssembly.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
+  }
+]

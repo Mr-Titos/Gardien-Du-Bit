@@ -1,0 +1,30 @@
+﻿<MudDialog>
+    <DialogContent>
+        <MudTextField @bind-Value="Name" Label="Nom du coffre" Variant="Variant.Outlined"  />
+        <MudCheckBox @bind-Value="Favorite" Label="Favoris" Color="Color.Primary"></MudCheckBox>
+        @if(Session == null)
+        {
+            <MudTextField @bind-Value="Password"
+                          Label="Mot de passe de connexion au coffre"
+                          InputType="@PasswordInput"
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@PasswordInputIcon"
+                          OnAdornmentClick="@ButtonVisibilityClick"
+                          Immediate="true"
+                          oninput="EvaluatePasswordStrength" />
+
+            <MudProgressLinear Color="@PasswordStrengthColor"
+                               Value="@PasswordStrength"
+                               Style="margin-top: 5px;" />
+
+            <MudText Typo="Typo.caption" Color="@PasswordStrengthColor">
+                @PasswordStrengthText
+            </MudText>
+        }
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Annuler</MudButton>
+        <MudButton OnClick="Submit" Disabled="@((Password == null || PasswordStrength < 60) && (Session == null && Password != null))">Valider</MudButton>
+    </DialogActions>
+</MudDialog>

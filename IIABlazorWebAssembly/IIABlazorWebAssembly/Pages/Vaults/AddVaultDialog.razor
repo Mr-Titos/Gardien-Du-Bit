@@ -1,0 +1,84 @@
+﻿@inject EncryptionService encryptionService
+
+<MudDialog>
+    <DialogContent>
+        <MudStack Class="p-6 d-flex flex-column gap-4" Style="max-width: 400px; margin: auto;">
+            <!-- Nom du coffre -->
+            <MudTextField @bind-Value="Name"
+                          Label="Nom du coffre"
+                          Variant="Variant.Outlined"
+                          FullWidth="true" />
+
+            <div class="d-flex justify-content-between">
+                <!-- Favoris -->
+                <MudCheckBox @bind-Value="Favorite"
+                             Label="Favoris"
+                             Color="Color.Primary"
+                             Class="mt-2" />
+
+                <!-- Totp -->
+                <MudCheckBox @bind-Value="isTotp"
+                             Label="Totp"
+                             Color="Color.Primary"
+                             Class="mt-2" />
+            </div>
+
+            <!-- Mot de passe avec visibilité -->
+            <MudTextField @bind-Value="Password"
+                          Label="Mot de passe"
+                          InputType="@PasswordInput"
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@PasswordInputIcon"
+                          OnAdornmentClick="@ButtonShowPassword"
+                          Immediate="true"
+                          FullWidth="true"
+                          oninput="EvaluatePasswordStrength" />
+
+            <!-- Barre de force -->
+            <MudProgressLinear Color="@PasswordStrengthColor"
+                               Value="@PasswordStrength"
+                               Style="height: 6px;"
+                               Rounded="true" />
+
+            <!-- Texte de force -->
+            <MudText Typo="Typo.caption"
+                     Color="@PasswordStrengthColor">
+                @PasswordStrengthText
+            </MudText>
+
+            <!-- Bouton génération -->
+            @if (!generatePasswordDisplay)
+            {
+                <MudButton OnClick="() => generatePasswordDisplay = true"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Refresh"
+                           FullWidth="true">
+                    Générer un mot de passe
+                </MudButton>
+            }
+        </MudStack>
+
+        @if (generatePasswordDisplay)
+        {
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle2">Longueur</MudText>
+                <MudSlider @bind-Value="_length" Min="6" Max="64" Step="1" />
+
+                <MudCheckBox T="bool" @bind-Value="_includeUpper" Label="Inclure des majuscules" />
+                <MudCheckBox T="bool" @bind-Value="_includeLower" Label="Inclure des minuscules" />
+                <MudCheckBox T="bool" @bind-Value="_includeSpecial" Label="Inclure des caractères spéciaux" />
+
+                <MudNumericField T="int" Label="Minimum de chiffres" @bind-Value="_minDigits" Min="0" Max="@_length" />
+
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GeneratePassword">Générer</MudButton>
+            </MudStack>
+            <MudButton OnClick="() => generatePasswordDisplay = false" Disabled="@string.IsNullOrEmpty(Password)">Utiliser</MudButton>
+        }
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Cancel">Annuler</MudButton>
+        <MudButton OnClick="Submit" Disabled="@(Password == null || PasswordStrength < 70)">Valider</MudButton>
+    </DialogActions>
+</MudDialog>

@@ -1,0 +1,80 @@
+@page "/vaults"
+@using IIABlazorWebAssembly.Models
+@using System.Net
+@using IIABlazorWebAssembly.Pages.Vaults
+@using common_gardienbit.DTO.Vault;
+@using common_gardienbit.Enum;
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+@using System.Text.Json;
+
+@inject APIService apiService
+@inject NavigationManager Navigation
+
+@attribute [Authorize(Roles = Role.User + "," + Role.Admin)]
+
+@inject APIService apiService
+@inject EncryptionService encryptionService
+@inject VaultService vaultService
+@inject MudAlertService mudAlertService
+
+<MudContainer Style="height=100%;margin-top=50px">
+    <MudText Typo="Typo.h5" Class="mb-4">Gestion des Coffres</MudText>
+    <MudDataGrid @ref="dataGrid" MultiSelection="true" T="GetVaultDTO" Filterable="true" ServerData="LoadVaults"
+                 Hideable="true" Groupable="true" GroupExpanded="false" GroupClassFunc="GroupClassFunc">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Coffres</MudText>
+            <MudSpacer />
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.vauId" Title="Coffre Id" Groupable="false" Hidden />
+            <TemplateColumn Title="Nom">
+                <CellTemplate Context="context">
+                    <MudText 
+                             Class="text-primary cursor-pointer hover:underline"
+                             @onclick="() => OnVaultSelected(context.Item)">
+                        @context.Item.vauName
+                    </MudText>
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.vauFavorite" Title="Favoris" />
+        <TemplateColumn Title="Actions">
+
+
+               <CellTemplate>
+
+                   @if (!context.Item.isShared)
+                    {
+                   
+                        
+                        <MudButton Color="Color.Primary" Size="Size.Small" OnClick="@(() => ShareVault(context.Item))">
+                            <MudIcon Icon="@Icons.Material.Filled.Share" />
+                        </MudButton>
+                        <MudButton Color="Color.Primary" Size="Size.Small" OnClick="@(() => RevokeSharedVault(context.Item))">
+                            <MudIcon Icon="@Icons.Material.Filled.ManageAccounts" />
+                        </MudButton>
+
+                        <MudButton Color="Color.Primary" Size="Size.Small" OnClick="@(() => UpdateVault(@context.Item))">
+                            <MudIcon Icon="@Icons.Material.Filled.Edit" />
+                        </MudButton>
+                        <MudButton Color="Color.Primary" Size="Size.Small" OnClick="@(() => DeleteVault(@context.Item.vauId))">
+                            <MudIcon Icon="@Icons.Material.Filled.Delete" />
+                        </MudButton>
+                    }
+
+
+
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="common_gardienbit.DTO.Vault.GetVaultDTO" />
+        </PagerContent>
+    </MudDataGrid>
+    <div class="d-flex flex-wrap mb-4">
+        <MudButton OnClick="@CreateVault" Color="@Color.Primary" Class="me-2">Ajouter un coffre</MudButton>
+    </div>
+</MudContainer>
+
+@code {
+  
+}

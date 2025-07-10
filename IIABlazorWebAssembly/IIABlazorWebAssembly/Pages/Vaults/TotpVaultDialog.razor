@@ -1,0 +1,17 @@
+﻿<MudDialog>
+    <DialogContent>
+        <p>Scannez ce code avec une app Authenticator :</p>
+        @if (Vault is not null && !string.IsNullOrEmpty(Vault.qrCodeTotp))
+        {
+            <div>@((MarkupString)Vault.qrCodeTotp)</div>
+        }
+        else
+        {
+            <MudText Color="Color.Secondary">Chargement du QR Code...</MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Annuler</MudButton>
+        <MudButton OnClick="Submit">Confirmer</MudButton>
+    </DialogActions>
+</MudDialog>

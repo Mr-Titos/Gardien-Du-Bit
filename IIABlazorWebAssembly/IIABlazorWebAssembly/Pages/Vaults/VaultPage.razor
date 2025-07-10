@@ -1,0 +1,225 @@
+﻿@page "/vault/{vaultId}"
+@using common_gardienbit.DTO.PwdPackage
+@using common_gardienbit.DTO.Category
+
+@inject APIService apiService
+@inject EncryptionService encryptionService
+@inject MudAlertService alertService
+<PageTitle>Vault</PageTitle>
+
+<MudContainer Class="pa-0" Style="height:100vh; background-color:#f5f5f5;">
+    <MudGrid Class="h-100" Spacing="3">
+        <!-- Sidebar: Categories -->
+        <MudItem xs="12" md="4" lg="3" Class="h-100">
+            <MudPaper Elevation="2" Class="h-100 pa-4 d-flex flex-column">
+                <MudText Typo="Typo.h6" Class="mb-3 text-primary">Catégories</MudText>
+                @if (!isShared)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth Class="mb-3" OnClick="AddCategory">
+                        + Ajouter une catégorie
+                    </MudButton>
+                }
+                <MudList T="GetCategoryDTO" Dense="true" Class="overflow-auto flex-grow-1">
+                    @if (categories != null)
+                    {
+                        <MudChip OnClick="@(() => selectedCategoryId = null)" Class="@((selectedCategoryId is null ? "mud-chip-selected" : ""))">
+                            Tout afficher
+                        </MudChip>
+
+                        @foreach (var category in categories)
+                        {
+                            <MudChip OnClick="@(() => SelectCategory(category))"
+                                     Class="@GetClassCategory(category)">
+                                @category.catName
+                            </MudChip>
+                        }
+
+                    }
+                    else
+                    {
+                        <MudListItem Disabled="true">Chargement...</MudListItem>
+                    }
+                </MudList>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Middle: Entries -->
+        <MudItem xs="12" md="4" lg="3" Class="h-100">
+            <MudPaper Elevation="2" Class="h-100 pa-4 d-flex flex-column">
+                <MudText Typo="Typo.h6" Class="mb-3 text-primary">Entrées</MudText>
+                @if (!isShared)
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth Class="mb-3" OnClick="ToggleAddForm">
+                        + Nouvelle entrée
+                    </MudButton>
+                }
+                <MudList T="GetPwdPackageDTO" Dense="true" Class="overflow-auto flex-grow-1">
+                        @foreach (var item in GetFilteredPwdPackages())
+                        {
+                        <MudListItem @onclick="() => SelectItem(item)" class="@GetItemClass(item)">
+                           @item.pwpName.EnfDecryptedText
+                        </MudListItem>
+
+                        }
+                </MudList>
+            </MudPaper>
+        </MudItem>
+
+        <!-- Main: Details / Add Form -->
+        <MudItem xs="12" md="4" lg="6" Class="h-100">
+            <MudPaper Elevation="2" Class="h-100 pa-4 d-flex flex-column">
+                @if (isAdding)
+                {
+                    <MudText Typo="Typo.h6" Class="mb-4 text-primary">Ajouter une entrée</MudText>
+                    <MudForm Class="flex-grow-1" >
+                        <MudGrid>
+                            <MudItem xs="12" sm="6">
+                                <MudTextField @bind-Value="newName" Label="Nom" FullWidth/>
+                            </MudItem>
+                            <MudItem xs="12" sm="6">
+                                <!-- Mot de passe avec visibilité -->
+                                <MudTextField @bind-Value="Password"
+                                              Label="Mot de passe"
+                                              InputType="@PasswordInput"
+                                              Adornment="Adornment.End"
+                                              AdornmentIcon="@PasswordInputIcon"
+                                              OnAdornmentClick="@ButtonShowPassword"
+                                              Immediate="true"
+                                              FullWidth="true"
+                                              oninput="EvaluatePasswordStrength" />
+
+                                <!-- Barre de force -->
+                                <MudProgressLinear Color="@PasswordStrengthColor"
+                                                   Value="@PasswordStrength"
+                                                   Style="height: 6px;"
+                                                   Rounded="true" />
+
+                                <!-- Texte de force -->
+                                <MudText Typo="Typo.caption"
+                                         Color="@PasswordStrengthColor">
+                                    @PasswordStrengthText
+                                </MudText>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="newUrl" Label="URL" FullWidth />
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudTextField @bind-Value="newComment" Label="Commentaire" FullWidth />
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudSelect T="GetCategoryDTO" @bind-Value="newCategory" Label="Catégorie" FullWidth >
+                                    @foreach (var cat in categories)
+                                    {
+                                        <MudSelectItem Value="cat">@cat.catName</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            </MudItem>
+                            <MudItem xs="12">
+                                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Refresh"
+                                           OnClick="() => generatePasswordDisplay = !generatePasswordDisplay">
+                                    Générer mot de passe
+                                </MudButton>
+                            </MudItem>
+                            @if (generatePasswordDisplay)
+                            {
+                                <MudItem xs="12">
+                                    <MudStack Spacing="2">
+                                        <MudSlider @bind-Value="_length" Min="6" Max="64" Step="1" aria-label="Longueur"/>
+                                        <MudCheckBox T="bool" @bind-Value="_includeUpper" Label="Inclure des majuscules" />
+                                        <MudCheckBox T="bool" @bind-Value="_includeLower" Label="Inclure des minuscules" />
+                                        <MudCheckBox T="bool" @bind-Value="_includeSpecial" Label="Inclure des caractères spéciaux" />
+                                        <MudNumericField @bind-Value="_minDigits" Label="Min. chiffres" Min="0" Max="_length" />
+                                        <MudButton Class="mb-2" Variant="Variant.Filled" OnClick="GeneratePassword">Générer</MudButton>
+                                    </MudStack>
+                                </MudItem>
+                            }
+                        </MudGrid>
+                    </MudForm>
+                    <MudSpacer />
+                    <MudStack  Justify="Justify.FlexEnd" Spacing="2">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(Password == null || PasswordStrength < 80)"  OnClick="SaveNewPackage">Sauvegarder</MudButton>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Default" OnClick="ToggleAddForm">Annuler</MudButton>
+                    </MudStack>
+                }
+                else if (selectedPackage != null)
+                {
+                    <MudText Typo="Typo.h6" Class="mb-4 text-primary">Détails de l'entrée</MudText>
+                    <MudGrid>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField Label="Nom" @bind-Value="@selectedPackage.pwpName.EnfDecryptedText" ReadOnly="!isEditing"/>
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                               <!-- Mot de passe avec visibilité -->
+                                <MudTextField 
+                                              Label="Mot de passe"
+                                              InputType="InputType.Password"
+                                              Adornment="Adornment.End"
+                                              AdornmentIcon="@Icons.Material.Filled.ContentCopy"
+                                              OnAdornmentClick="() => CopyToClipboard(selectedPackage.pwpContent.EnfDecryptedText)" 
+                                              Immediate="true"
+                                              Value="@selectedPackage.pwpContent.EnfCipherTextBase64"
+                                              FullWidth="true"
+                                              oninput="EvaluatePasswordStrength" />
+
+                                <!-- Barre de force -->
+                                <MudProgressLinear Color="@PasswordStrengthColor"
+                                                   Value="@PasswordStrength"
+                                                   Style="height: 6px;"
+                                                   Rounded="true" />
+
+                                <!-- Texte de force -->
+                                <MudText Typo="Typo.caption"
+                                         Color="@PasswordStrengthColor">
+                                    @PasswordStrengthText
+                                </MudText>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudTextField Label="URL" @bind-Value="@selectedPackage.pwpUrl.EnfDecryptedText" ReadOnly="!isEditing" />
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudTextField Label="Commentaire" @bind-Value="@selectedPackage.pwpCom.EnfDecryptedText" ReadOnly="!isEditing" />
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudSelect T="GetCategoryDTO"
+                                       ReadOnly="!isEditing"
+                                       Label="Catégorie"
+                                       FullWidth
+                                       @bind-Value="selectedPackage.pwpCategory"
+                                       ToStringFunc="cat => cat.catName">
+
+                                @foreach (var cat in categories)
+                                {
+                                    <MudSelectItem Value="cat">@cat.catName</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    </MudGrid>
+                    <MudDivider Class="my-4" />
+                    <MudText Typo="Typo.caption">
+                        Créé le @selectedPackage.pwpEntryDate<br />
+                        Dernière modification : @selectedPackage.pwpLastUpdateDate
+                    </MudText>
+                    @if (!isShared)
+                    {
+                      <MudSpacer />
+                        <MudStack  Justify="Justify.FlexEnd" Spacing="2" Class="mt-4">
+                            <MudButton Variant="Variant.Outlined" Color="Color.Info" OnClick="SharePassword">Partager</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="@((isEditing) ? Color.Success : Color.Primary)" Disabled="@(Password == null || PasswordStrength < 80)"  OnClick="() => ToggleEdit(selectedPackage)">
+                            @(isEditing ? "Valider" : "Modifier")
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteItem(selectedPackage)">
+                            Supprimer
+                        </MudButton>
+                    </MudStack>
+                    }
+                }
+                else
+                {
+                    <div class="d-flex align-center justify-center h-100">
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">Sélectionnez une entrée à gauche pour afficher les détails.</MudText>
+                    </div>
+                }
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>

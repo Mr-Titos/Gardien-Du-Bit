@@ -1,0 +1,62 @@
+﻿@inherits LayoutComponentBase
+
+<MudLayout>
+    <MudMainContent>
+        <MudContainer Style="padding:0; max-width:100vw; min-height:100vh; background-color:#121420;">
+            <MudAppBar Elevation="1" Style="background-color:#222831; z-index:1000;">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle" />
+                <MudSpacer />
+                <LoginDisplay />
+            </MudAppBar>
+
+            <MudGrid Style="height: calc(100vh - 64px); overflow: hidden;" Spacing="1">
+                <MudItem xs="12" sm="2" Class="nav-pane">
+                    <NavMenu drawerOpen="_drawerOpen" />
+                </MudItem>
+                <MudItem xs="12" sm="10" Class="main-content">
+                    <div class="content-body">
+                        @Body
+                        <IIABlazorWebAssembly.Pages.MudAlertDisplay />
+                    </div>
+                </MudItem>
+            </MudGrid>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    public bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}
+
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: #121420;
+    }
+
+  /*   .nav-pane {
+        background-color: #1f1f2e;
+        min-height: calc(100vh - 64px);
+    }
+ */
+    .main-content {
+        background-color: #121420;
+        padding: 1rem;
+        overflow-y: auto;
+        height: calc(100vh - 64px);
+    }
+
+    .content-body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        color: white;
+    }
+</style>

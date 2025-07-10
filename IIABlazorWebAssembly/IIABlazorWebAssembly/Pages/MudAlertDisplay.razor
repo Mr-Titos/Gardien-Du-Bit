@@ -1,0 +1,54 @@
+﻿@using MudBlazor
+@implements IDisposable
+
+@inject MudAlertService alertService
+
+@if (alertMessages.Any())
+{
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 1100; display: flex; flex-direction: column; gap: 10px;">
+        @foreach (var alert in alertMessages)
+        {
+                <MudAlert Severity="@alert.Severity" 
+                       Variant="@alert.Variant"
+                        ShowCloseIcon="@alert.ShowIcon"
+                      OnClick="() => Clear(alert)">
+                   @alert.Message
+                </MudAlert>
+        }
+    </div>
+}
+
+@code {
+    private List<MudAlertService.AlertMessage> alertMessages = new();
+    private int alertTimeout = 4500;
+    // private int alertAnimationDuration = 500;
+
+    protected override void OnInitialized()
+    {
+        alertService.OnAlert += HandleAlert;
+    }
+
+    private void HandleAlert(MudAlertService.AlertMessage message)
+    {
+        alertMessages.Add(message);
+        StateHasChanged();
+        DelayAndClear(message);
+    }
+
+    private async void DelayAndClear(MudAlertService.AlertMessage alert)
+    {
+        await Task.Delay(alertTimeout);
+        Clear(alert);
+    }
+
+    private void Clear(MudAlertService.AlertMessage alert)
+    {
+        alertMessages.Remove(alert);
+        this.StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        alertService.OnAlert -= HandleAlert;
+    }
+}

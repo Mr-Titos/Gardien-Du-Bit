@@ -1,0 +1,48 @@
+﻿@using common_gardienbit.DTO.Vault
+
+
+<MudDialog>
+    <DialogContent>
+        @if (hasActiveShareLink == false)
+        {
+            <MudNumericField T="int"
+                             Label="Nombre d'utilisations"
+                             @bind-Value="NumberOfUses"
+                             Min="1"
+                             Max="15"
+                             Required="true"
+                             Immediate="true"
+                             Variant="Variant.Outlined" />                 
+            <MudText Typo="Typo.subtitle2">Le lien de partage sera valide jusqu'à ce que le nombre d'utilisation soit atteint.</MudText>
+            <MudButton OnClick="@(() => NextStep())" Color="Color.Primary">Générer le lien de partage</MudButton>
+        }
+        else
+        {
+            <MudText Typo="Typo.h6">Lien de partage généré</MudText>
+            @if (!string.IsNullOrEmpty(shareLink))
+            {
+                <MudText> Nombre restant d'utilisation : @numberLeft</MudText>
+                <MudText Typo="Typo.subtitle2">@shareLink</MudText>
+                <MudButton StartIcon="@Icons.Material.Filled.ContentCopy" OnClick="@(() => CopyToClipboard())" Color="Color.Primary">Copier</MudButton>
+                @if (qrCode != null)
+                {
+                    <MudSpacer></MudSpacer>
+                    <MudText>Donner ce QR Code pour partager le coffre :</MudText>
+                    <div>@((MarkupString)qrCode)</div>
+                } else
+                {
+                    <p>salut</p>
+                }
+            }
+            else
+            {
+                <MudProgressCircular Indeterminate />
+            }
+        }
+      
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => MudDialog?.Cancel()" Color="Color.Primary">Fermer</MudButton>
+    </DialogActions>
+</MudDialog>
+

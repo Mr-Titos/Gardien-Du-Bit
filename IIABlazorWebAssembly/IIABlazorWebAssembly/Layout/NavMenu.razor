@@ -1,0 +1,70 @@
+﻿@page "/"
+
+@using IIABlazorWebAssembly.Pages.AuthenticationVault
+@using System.Net
+@using IIABlazorWebAssembly.Pages.Vaults
+@using common_gardienbit.DTO.Vault;
+@using common_gardienbit.Enum;
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+@using System.Text.Json;
+
+@inject IDialogService DialogService
+@inject APIService apiService
+@inject NavigationManager Navigation
+@inject NavigationManager Navigation
+
+<MudLayout>
+    <MudDrawer @bind-Open="drawerOpen" Elevation="4" Style="background-color:#222431">
+        <MudButton Href="/vaults"  Color="Color.Primary"> Coffres</MudButton>
+        <MudButton Href="/admin/logs" Color="Color.Primary"> Logs</MudButton>
+    </MudDrawer>
+</MudLayout>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    [Parameter]
+    public bool drawerOpen { get; set; }
+
+    // private string? authorizedRole = Role.User;
+
+}
+
+<style>
+    .search-bar {
+        background-color: #2a2d3f;
+        padding: 5px;
+        border-radius: 5px;
+        color: white;
+        margin-bottom: 10px;
+    }
+
+    .vault-list {
+        flex-grow: 1;
+        overflow-y: auto;
+        margin-top: 10px;
+    }
+
+    .vault-item {
+        padding: 10px;
+        border-bottom: 1px solid #333;
+    }
+
+        .vault-item:hover {
+            background-color: #2a2d3f;
+            cursor: pointer;
+        }
+
+    .add-button {
+        margin-top: auto;
+        text-align: center;
+        padding: 10px;
+        background-color: #161824;
+        cursor: pointer;
+    }
+
+        .add-button:hover {
+            background-color: #292b3b;
+        }
+</style>
